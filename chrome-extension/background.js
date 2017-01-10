@@ -1,7 +1,7 @@
 
 // ショートカットキー
 chrome.commands.onCommand.addListener(function (command) {
-	if (command === "execute_browser_action") {
+	if (command === "open_clipboard_data") {
 		fire();
 	}
 });

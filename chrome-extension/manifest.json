@@ -21,7 +21,7 @@
 	},
 
 	"commands": {
-		"execute_browser_action": {
+		"open_clipboard_data": {
 			"description": "Open clipboard data",
 			// おすすめ設定
 			"suggested_key": {
