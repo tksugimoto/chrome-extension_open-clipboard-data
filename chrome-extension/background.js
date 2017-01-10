@@ -9,10 +9,10 @@ chrome.commands.onCommand.addListener(function (command) {
 chrome.browserAction.onClicked.addListener(fire);
 
 function fire() {
-	var text = getClipboard();
+	let text = getClipboard();
 	if (!text)  return;
 	text = text.replace(/^\s+|\s+$/g, "");
-	var url;
+	let url;
 	if (/^(h?ttps?|file):[/][/]/.test(text)) {
 		url = text.replace(/^h?ttp/, "http");
 	} else {
@@ -42,12 +42,12 @@ function fire() {
 }
 
 function getClipboard() {
-	var pasteTarget = document.createElement("div");
+	const pasteTarget = document.createElement("div");
 	pasteTarget.contentEditable = true;
-	var actElem = document.activeElement.appendChild(pasteTarget).parentNode;
+	const actElem = document.activeElement.appendChild(pasteTarget).parentNode;
 	pasteTarget.focus();
 	document.execCommand("Paste", null, null);
-	var paste = pasteTarget.textContent;
+	const paste = pasteTarget.textContent;
 	actElem.removeChild(pasteTarget);
 	return paste;
 };
