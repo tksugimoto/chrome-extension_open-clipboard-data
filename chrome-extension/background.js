@@ -9,7 +9,7 @@ chrome.commands.onCommand.addListener(command => {
 chrome.browserAction.onClicked.addListener(fire);
 
 function fire() {
-	let text = getClipboard();
+	let text = getClipboardText();
 	if (!text)  return;
 	text = text.replace(/^\s+|\s+$/g, "");
 	let url;
@@ -41,13 +41,15 @@ function fire() {
 	});
 }
 
-function getClipboard() {
+const getClipboardText = (() => {
 	const pasteTarget = document.createElement("div");
 	pasteTarget.contentEditable = true;
-	const actElem = document.activeElement.appendChild(pasteTarget).parentNode;
-	pasteTarget.focus();
-	document.execCommand("Paste", null, null);
-	const paste = pasteTarget.textContent;
-	actElem.removeChild(pasteTarget);
-	return paste;
-};
+	document.activeElement.appendChild(pasteTarget);
+	return () => {
+		pasteTarget.textContent = "";
+		pasteTarget.focus();
+		document.execCommand("Paste", null, null);
+		const clipboardText = pasteTarget.textContent;
+		return clipboardText;
+	};
+})();
