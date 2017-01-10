@@ -23,6 +23,10 @@
 	"commands": {
 		"execute_browser_action": {
 			"description": "Open clipboard data",
+			// おすすめ設定
+			"suggested_key": {
+				"default": "Ctrl+Shift+C"
+			},
 			"global": true
 		}
 	}
