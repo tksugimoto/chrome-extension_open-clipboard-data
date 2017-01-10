@@ -1,6 +1,6 @@
 
 // ショートカットキー
-chrome.commands.onCommand.addListener(function (command) {
+chrome.commands.onCommand.addListener(command => {
 	if (command === "open_clipboard_data") {
 		fire();
 	}
@@ -25,7 +25,7 @@ function fire() {
 		// タブをセレクトにしない（tabの順序を管理する拡張tabOrderとの連携のため：1つ右に入れる）
 		active: false,
 		selected: false
-	}, function (tab){
+	}, tab => {
 		// タブをセレクト
 		chrome.tabs.update(tab.id, {
 			active: true
