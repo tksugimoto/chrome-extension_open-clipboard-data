@@ -1,16 +1,12 @@
 
 // ショートカットキー
 chrome.commands.onCommand.addListener(function (command) {
-	console.log(command);
 	if (command === "execute_browser_action") {
 		fire();
 	}
 });
 
-// 
-chrome.browserAction.onClicked.addListener(function () {
-	fire();
-});
+chrome.browserAction.onClicked.addListener(fire);
 
 function fire() {
 	var text = getClipboard();
