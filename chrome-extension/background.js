@@ -1,15 +1,11 @@
 
 const fire = () => {
-	let text = getClipboardText();
+	const text = getClipboardText().trim();
 	if (!text)  return;
-	text = text.trim();
-	let url;
-	if (/^(h?ttps?|file):[/][/]/.test(text)) {
-		url = text.replace(/^h?ttp/, "http");
-	} else {
-	// URLじゃなかったら検索
-		url = generateGoogleSearchUrl(text);
-	}
+	const url = /^(h?ttps?|file):[/][/]/.test(text) ?
+		text.replace(/^h?ttp/, "http") :
+		// URLじゃなかったら検索
+		generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
 	chrome.tabs.create({
 		url: url,
