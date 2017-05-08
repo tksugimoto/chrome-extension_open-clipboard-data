@@ -10,10 +10,7 @@ const fire = () => {
 	chrome.tabs.create({
 		url
 	}, tab => {
-		// ウィンドウをアクティブにする
 		chrome.windows.update(tab.windowId, {
-			// 最前面に出す
-			focused: true,
 			// アイコンが点滅
 			drawAttention: true
 		});
