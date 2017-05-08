@@ -9,11 +9,6 @@ const fire = () => {
 	// tabs権限はなくても使える
 	chrome.tabs.create({
 		url
-	}, tab => {
-		chrome.windows.update(tab.windowId, {
-			// アイコンが点滅
-			drawAttention: true
-		});
 	});
 };
 
