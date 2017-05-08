@@ -8,7 +8,7 @@ const fire = () => {
 		url = text.replace(/^h?ttp/, "http");
 	} else {
 	// URLじゃなかったら検索
-		url = "https://www.google.co.jp/search?hl=ja&complete=0&q=" + encodeURIComponent(text);
+		url = generateGoogleSearchUrl(text);
 	}
 	// tabs権限はなくても使える
 	chrome.tabs.create({
@@ -53,3 +53,17 @@ const getClipboardText = (() => {
 		return clipboardText;
 	};
 })();
+
+const generateGoogleSearchUrl = word => {
+	const queryObject = {
+		hl: "ja",
+		complete: 0,
+		q: word
+	};
+	const querys = Object.entries(queryObject).map(([key, value]) => {
+		return `${key}=${encodeURIComponent(value)}`;
+	});
+	const queryString = querys.join("&");
+
+	return `https://www.google.co.jp/search?${queryString}`;
+};
