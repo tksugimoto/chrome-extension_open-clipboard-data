@@ -8,16 +8,8 @@ const fire = () => {
 		generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
 	chrome.tabs.create({
-		url: url,
-		// タブをセレクトにしない（tabの順序を管理する拡張tabOrderとの連携のため：1つ右に入れる）
-		active: false,
-		selected: false
+		url
 	}, tab => {
-		// タブをセレクト
-		chrome.tabs.update(tab.id, {
-			active: true
-		});
-		
 		// ウィンドウをアクティブにする
 		chrome.windows.update(tab.windowId, {
 			// 最前面に出す
