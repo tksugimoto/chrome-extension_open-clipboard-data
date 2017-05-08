@@ -2,7 +2,7 @@
 const fire = () => {
 	let text = getClipboardText();
 	if (!text)  return;
-	text = text.replace(/^\s+|\s+$/g, "");
+	text = text.trim();
 	let url;
 	if (/^(h?ttps?|file):[/][/]/.test(text)) {
 		url = text.replace(/^h?ttp/, "http");
