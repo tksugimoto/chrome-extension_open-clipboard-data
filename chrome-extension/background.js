@@ -1,14 +1,5 @@
 
-// ショートカットキー
-chrome.commands.onCommand.addListener(command => {
-	if (command === "open_clipboard_data") {
-		fire();
-	}
-});
-
-chrome.browserAction.onClicked.addListener(fire);
-
-function fire() {
+const fire = () => {
 	let text = getClipboardText();
 	if (!text)  return;
 	text = text.replace(/^\s+|\s+$/g, "");
@@ -39,7 +30,16 @@ function fire() {
 			drawAttention: true
 		});
 	});
-}
+};
+
+// ショートカットキー
+chrome.commands.onCommand.addListener(command => {
+	if (command === "open_clipboard_data") {
+		fire();
+	}
+});
+
+chrome.browserAction.onClicked.addListener(fire);
 
 const getClipboardText = (() => {
 	const pasteTarget = document.createElement("div");
