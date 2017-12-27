@@ -2,21 +2,21 @@
 const fire = () => {
 	const text = getClipboardText().trim();
 	if (!text)  return;
-	const url = text.startsWith("\\\\") ?
-		`file:${text.replace(/\\/g, "/")}` :
+	const url = text.startsWith('\\\\') ?
+		`file:${text.replace(/\\/g, '/')}` :
 		/^(h?ttps?|file):[/][/]/.test(text) ?
-			text.replace(/^h?ttp/, "http") :
+			text.replace(/^h?ttp/, 'http') :
 			// URLじゃなかったら検索
 			generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
 	chrome.tabs.create({
-		url
+		url,
 	});
 };
 
 // ショートカットキー
 chrome.commands.onCommand.addListener(command => {
-	if (command === "open_clipboard_data") {
+	if (command === 'open_clipboard_data') {
 		fire();
 	}
 });
@@ -24,13 +24,13 @@ chrome.commands.onCommand.addListener(command => {
 chrome.browserAction.onClicked.addListener(fire);
 
 const getClipboardText = (() => {
-	const pasteTarget = document.createElement("div");
+	const pasteTarget = document.createElement('div');
 	pasteTarget.contentEditable = true;
 	document.activeElement.appendChild(pasteTarget);
 	return () => {
-		pasteTarget.textContent = "";
+		pasteTarget.textContent = '';
 		pasteTarget.focus();
-		document.execCommand("Paste", null, null);
+		document.execCommand('Paste', null, null);
 		const clipboardText = pasteTarget.textContent;
 		return clipboardText;
 	};
@@ -38,14 +38,14 @@ const getClipboardText = (() => {
 
 const generateGoogleSearchUrl = word => {
 	const queryObject = {
-		hl: "ja",
+		hl: 'ja',
 		complete: 0,
-		q: word
+		q: word,
 	};
 	const querys = Object.entries(queryObject).map(([key, value]) => {
 		return `${key}=${encodeURIComponent(value)}`;
 	});
-	const queryString = querys.join("&");
+	const queryString = querys.join('&');
 
 	return `https://www.google.co.jp/search?${queryString}`;
 };
