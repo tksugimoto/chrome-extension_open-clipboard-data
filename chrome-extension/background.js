@@ -10,7 +10,7 @@ const fire = () => {
 			generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
 	chrome.tabs.create({
-		url
+		url,
 	});
 };
 
@@ -40,7 +40,7 @@ const generateGoogleSearchUrl = word => {
 	const queryObject = {
 		hl: "ja",
 		complete: 0,
-		q: word
+		q: word,
 	};
 	const querys = Object.entries(queryObject).map(([key, value]) => {
 		return `${key}=${encodeURIComponent(value)}`;
