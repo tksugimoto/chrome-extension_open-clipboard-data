@@ -4,10 +4,12 @@ const fire = () => {
 	if (!text)  return;
 	const url = text.startsWith('\\\\') ?
 		`file:${text.replace(/\\/g, '/')}` :
-		/^(h?ttps?|file):[/][/]/.test(text) ?
-			text.replace(/^h?ttp/, 'http') :
-			// URLじゃなかったら検索
-			generateGoogleSearchUrl(text);
+		/^[a-z]:\\/i.test(text) ?
+			`file:///${text}` :
+			/^(h?ttps?|file):[/][/]/.test(text) ?
+				text.replace(/^h?ttp/, 'http') :
+				// URLじゃなかったら検索
+				generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
 	chrome.tabs.create({
 		url,
