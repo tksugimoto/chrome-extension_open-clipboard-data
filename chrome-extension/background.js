@@ -1,15 +1,46 @@
 
+const urlChecker = (() => {
+	const checkers = [];
+	const addChecker = fn => {
+		checkers.push(fn);
+	};
+	const collectFirst = target => {
+		for (const checker of checkers) {
+			const result = checker(target);
+			if (result) return result;
+		}
+	};
+	return {
+		addChecker,
+		collectFirst,
+	};
+})();
+
+urlChecker.addChecker(target => {
+	// ネットワークファイルパス
+	if (target.startsWith('\\\\')) {
+		return `file:${target.replace(/\\/g, '/')}`;
+	}
+});
+urlChecker.addChecker(target => {
+	// ローカルファイルパス
+	if (/^[a-z]:\\/i.test(target)) {
+		return `file:///${target}`;
+	}
+});
+urlChecker.addChecker(target => {
+	// URL
+	if (/^(h?ttps?|file):[/][/]/.test(target)) {
+		return target.replace(/^h?ttp/, 'http');
+	}
+});
+
 const fire = () => {
 	const text = getClipboardText().trim();
 	if (!text)  return;
-	const url = text.startsWith('\\\\') ?
-		`file:${text.replace(/\\/g, '/')}` :
-		/^[a-z]:\\/i.test(text) ?
-			`file:///${text}` :
-			/^(h?ttps?|file):[/][/]/.test(text) ?
-				text.replace(/^h?ttp/, 'http') :
-				// URLじゃなかったら検索
-				generateGoogleSearchUrl(text);
+	const url = urlChecker.collectFirst(text) || 
+		// URLじゃなかったら検索
+		generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
 	chrome.tabs.create({
 		url,
