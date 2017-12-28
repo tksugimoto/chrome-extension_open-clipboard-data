@@ -4,7 +4,7 @@ const urlChecker = (() => {
 	const addChecker = fn => {
 		checkers.push(fn);
 	};
-	const check = target => {
+	const collectFirst = target => {
 		for (const checker of checkers) {
 			const result = checker(target);
 			if (result) return result;
@@ -12,7 +12,7 @@ const urlChecker = (() => {
 	};
 	return {
 		addChecker,
-		check,
+		collectFirst,
 	};
 })();
 
@@ -38,7 +38,7 @@ urlChecker.addChecker(target => {
 const fire = () => {
 	const text = getClipboardText().trim();
 	if (!text)  return;
-	const url = urlChecker.check(text) || 
+	const url = urlChecker.collectFirst(text) || 
 		// URLじゃなかったら検索
 		generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
