@@ -21,6 +21,10 @@ urlChecker.addChecker(target => {
 	if (target.startsWith('\\\\')) {
 		return `file:${target.replace(/\\/g, '/')}`;
 	}
+	// ネットワークファイルパス（先頭・末尾ダブルクォーテーションあり）
+	if (target.startsWith('"\\\\') && target.endsWith('"')) {
+		return `file:${target.slice(1, -1).replace(/\\/g, '/')}`;
+	}
 });
 urlChecker.addChecker(target => {
 	// ローカルファイルパス
