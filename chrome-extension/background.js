@@ -31,6 +31,10 @@ urlChecker.addChecker(target => {
 	if (/^[a-z]:\\/i.test(target)) {
 		return `file:///${target.replace(/\\/g, '/')}`;
 	}
+	// ローカルファイルパス（先頭・末尾ダブルクォーテーションあり）
+	if (/^"[a-z]:\\/i.test(target) && target.endsWith('"')) {
+		return `file:///${target.slice(1, -1).replace(/\\/g, '/')}`;
+	}
 });
 urlChecker.addChecker(target => {
 	// http URL
