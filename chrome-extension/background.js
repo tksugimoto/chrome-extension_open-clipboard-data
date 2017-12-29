@@ -21,17 +21,35 @@ urlChecker.addChecker(target => {
 	if (target.startsWith('\\\\')) {
 		return `file:${target.replace(/\\/g, '/')}`;
 	}
+	// ネットワークファイルパス（先頭・末尾ダブルクォーテーションあり）
+	if (target.startsWith('"\\\\') && target.endsWith('"')) {
+		return `file:${target.slice(1, -1).replace(/\\/g, '/')}`;
+	}
 });
 urlChecker.addChecker(target => {
 	// ローカルファイルパス
 	if (/^[a-z]:\\/i.test(target)) {
-		return `file:///${target}`;
+		return `file:///${target.replace(/\\/g, '/')}`;
+	}
+	// ローカルファイルパス（先頭・末尾ダブルクォーテーションあり）
+	if (/^"[a-z]:\\/i.test(target) && target.endsWith('"')) {
+		return `file:///${target.slice(1, -1).replace(/\\/g, '/')}`;
 	}
 });
 urlChecker.addChecker(target => {
-	// URL
-	if (/^(h?ttps?|file):[/][/]/.test(target)) {
-		return target.replace(/^h?ttp/, 'http');
+	// http URL
+	if (/^https?:[/][/]/.test(target)) {
+		return target;
+	}
+	// http URL (h抜き)
+	if (/^ttps?:[/][/]/.test(target)) {
+		return `h${target}`;
+	}
+});
+urlChecker.addChecker(target => {
+	// ファイルURL
+	if (target.startsWith('file://')) {
+		return target;
 	}
 });
 
