@@ -29,9 +29,15 @@ urlChecker.addChecker(target => {
 	}
 });
 urlChecker.addChecker(target => {
-	// URL
-	if (/^(h?ttps?|file):[/][/]/.test(target)) {
+	// http URL
+	if (/^h?ttps?:[/][/]/.test(target)) {
 		return target.replace(/^h?ttp/, 'http');
+	}
+});
+urlChecker.addChecker(target => {
+	// ファイルURL
+	if (target.startsWith('file://')) {
+		return target;
 	}
 });
 
