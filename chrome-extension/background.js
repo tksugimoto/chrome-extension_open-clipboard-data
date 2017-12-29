@@ -29,7 +29,7 @@ urlChecker.addChecker(target => {
 urlChecker.addChecker(target => {
 	// ローカルファイルパス
 	if (/^[a-z]:\\/i.test(target)) {
-		return `file:///${target}`;
+		return `file:///${target.replace(/\\/g, '/')}`;
 	}
 });
 urlChecker.addChecker(target => {
