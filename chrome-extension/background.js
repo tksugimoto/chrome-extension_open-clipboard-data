@@ -30,8 +30,12 @@ urlChecker.addChecker(target => {
 });
 urlChecker.addChecker(target => {
 	// http URL
-	if (/^h?ttps?:[/][/]/.test(target)) {
-		return target.replace(/^h?ttp/, 'http');
+	if (/^https?:[/][/]/.test(target)) {
+		return target;
+	}
+	// http URL (h抜き)
+	if (/^ttps?:[/][/]/.test(target)) {
+		return `h${target}`;
 	}
 });
 urlChecker.addChecker(target => {
