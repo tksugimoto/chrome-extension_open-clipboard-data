@@ -29,6 +29,10 @@ urlChecker.addChecker(target => {
 	if (target.startsWith('<<\\\\') && target.endsWith('>>')) {
 		return `file:${target.slice(2, -2).replace(/\\/g, '/')}`;
 	}
+	// ネットワークファイルパス（先頭<・末尾>あり）
+	if (target.startsWith('<\\\\') && target.endsWith('>')) {
+		return `file:${target.slice(1, -1).replace(/\\/g, '/')}`;
+	}
 });
 urlChecker.addChecker(target => {
 	// ローカルファイルパス
@@ -60,7 +64,7 @@ urlChecker.addChecker(target => {
 const fire = () => {
 	const text = getClipboardText().trim();
 	if (!text)  return;
-	const url = urlChecker.collectFirst(text) || 
+	const url = urlChecker.collectFirst(text) ||
 		// URLじゃなかったら検索
 		generateGoogleSearchUrl(text);
 	// tabs権限はなくても使える
