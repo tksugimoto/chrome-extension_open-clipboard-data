@@ -19,29 +19,29 @@ const urlChecker = (() => {
 urlChecker.addChecker(target => {
 	// ネットワークファイルパス
 	if (target.startsWith('\\\\')) {
-		return `file:${target.replace(/\\/g, '/')}`;
+		return `file:${target.replace(/\\/g, '/')}`.replace(/[%#]/g, encodeURIComponent);
 	}
 	// ネットワークファイルパス（先頭・末尾ダブルクォーテーションあり）
 	if (target.startsWith('"\\\\') && target.endsWith('"')) {
-		return `file:${target.slice(1, -1).replace(/\\/g, '/')}`;
+		return `file:${target.slice(1, -1).replace(/\\/g, '/')}`.replace(/[%#]/g, encodeURIComponent);
 	}
 	// ネットワークファイルパス（先頭<<・末尾>>あり）
 	if (target.startsWith('<<\\\\') && target.endsWith('>>')) {
-		return `file:${target.slice(2, -2).replace(/\\/g, '/')}`;
+		return `file:${target.slice(2, -2).replace(/\\/g, '/')}`.replace(/[%#]/g, encodeURIComponent);
 	}
 	// ネットワークファイルパス（先頭<・末尾>あり）
 	if (target.startsWith('<\\\\') && target.endsWith('>')) {
-		return `file:${target.slice(1, -1).replace(/\\/g, '/')}`;
+		return `file:${target.slice(1, -1).replace(/\\/g, '/')}`.replace(/[%#]/g, encodeURIComponent);
 	}
 });
 urlChecker.addChecker(target => {
 	// ローカルファイルパス
 	if (/^[a-z]:\\/i.test(target)) {
-		return `file:///${target.replace(/\\/g, '/')}`;
+		return `file:///${target.replace(/\\/g, '/')}`.replace(/[%#]/g, encodeURIComponent);
 	}
 	// ローカルファイルパス（先頭・末尾ダブルクォーテーションあり）
 	if (/^"[a-z]:\\/i.test(target) && target.endsWith('"')) {
-		return `file:///${target.slice(1, -1).replace(/\\/g, '/')}`;
+		return `file:///${target.slice(1, -1).replace(/\\/g, '/')}`.replace(/[%#]/g, encodeURIComponent);
 	}
 });
 urlChecker.addChecker(target => {
