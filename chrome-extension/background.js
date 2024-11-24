@@ -62,7 +62,17 @@ urlChecker.addChecker(target => {
 });
 
 const fire = () => {
-	const text = getClipboardText().trim();
+	chrome.windows.create({
+		type: 'popup',
+		state: 'minimized',
+		url: './offscreen.html',
+	});
+};
+
+chrome.runtime.onMessage.addListener(message => {
+	if (message.type !== 'clipboard-text') return;
+
+	const text = message.text;
 	if (!text)  return;
 	const url = urlChecker.collectFirst(text) ||
 		// URLじゃなかったら検索
@@ -71,7 +81,7 @@ const fire = () => {
 	chrome.tabs.create({
 		url,
 	});
-};
+});
 
 // ショートカットキー
 chrome.commands.onCommand.addListener(command => {
@@ -81,19 +91,6 @@ chrome.commands.onCommand.addListener(command => {
 });
 
 chrome.browserAction.onClicked.addListener(fire);
-
-const getClipboardText = (() => {
-	const pasteTarget = document.createElement('div');
-	pasteTarget.contentEditable = true;
-	document.activeElement.appendChild(pasteTarget);
-	return () => {
-		pasteTarget.textContent = '';
-		pasteTarget.focus();
-		document.execCommand('Paste', null, null);
-		const clipboardText = pasteTarget.textContent;
-		return clipboardText;
-	};
-})();
 
 const generateGoogleSearchUrl = word => {
 	const queryObject = {
