@@ -61,18 +61,40 @@ urlChecker.addChecker(target => {
 	}
 });
 
-const fire = () => {
-	chrome.windows.create({
-		type: 'popup',
-		state: 'minimized',
-		url: './offscreen.html',
+const setupOffscreenDocument = (() => {
+	let creating;
+	return async () => {
+		const offscreenUrl = chrome.runtime.getURL('offscreen.html');
+		const existingContexts = await chrome.runtime.getContexts({
+			contextTypes: ['OFFSCREEN_DOCUMENT'],
+			documentUrls: [offscreenUrl],
+		});
+
+		if (existingContexts.length > 0) {
+			return;
+		}
+
+		if (creating) {
+			await creating;
+		} else {
+			creating = chrome.offscreen.createDocument({
+				url: offscreenUrl,
+				reasons: [chrome.offscreen.Reason.CLIPBOARD],
+				justification: 'Read text from the clipboard.',
+			});
+			await creating;
+			creating = null;
+		}
+	};
+})();
+
+const fire = async () => {
+	await setupOffscreenDocument();
+
+	const text = await chrome.runtime.sendMessage({
+		type: 'read-clipboard-text',
 	});
-};
 
-chrome.runtime.onMessage.addListener(message => {
-	if (message.type !== 'clipboard-text') return;
-
-	const text = message.text;
 	if (!text)  return;
 	const url = urlChecker.collectFirst(text) ||
 		// URLじゃなかったら検索
@@ -81,7 +103,7 @@ chrome.runtime.onMessage.addListener(message => {
 	chrome.tabs.create({
 		url,
 	});
-});
+};
 
 // ショートカットキー
 chrome.commands.onCommand.addListener(command => {
@@ -90,7 +112,7 @@ chrome.commands.onCommand.addListener(command => {
 	}
 });
 
-chrome.browserAction.onClicked.addListener(fire);
+chrome.action.onClicked.addListener(fire);
 
 const generateGoogleSearchUrl = word => {
 	const queryObject = {

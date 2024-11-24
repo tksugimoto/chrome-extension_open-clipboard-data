@@ -9,10 +9,8 @@ const getClipboardText = (() => {
 	};
 })();
 
-
-chrome.runtime.sendMessage({
-	type: 'clipboard-text',
-	text: getClipboardText(),
-}, () => {
-	window.close();
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+	if (message.type === 'read-clipboard-text') {
+		sendResponse(getClipboardText());
+	}
 });
