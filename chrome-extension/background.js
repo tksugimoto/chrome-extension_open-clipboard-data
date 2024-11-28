@@ -61,8 +61,40 @@ urlChecker.addChecker(target => {
 	}
 });
 
-const fire = () => {
-	const text = getClipboardText().trim();
+const setupOffscreenDocument = (() => {
+	let creating;
+	return async () => {
+		const offscreenUrl = chrome.runtime.getURL('offscreen.html');
+		const existingContexts = await chrome.runtime.getContexts({
+			contextTypes: ['OFFSCREEN_DOCUMENT'],
+			documentUrls: [offscreenUrl],
+		});
+
+		if (existingContexts.length > 0) {
+			return;
+		}
+
+		if (creating) {
+			await creating;
+		} else {
+			creating = chrome.offscreen.createDocument({
+				url: offscreenUrl,
+				reasons: [chrome.offscreen.Reason.CLIPBOARD],
+				justification: 'Read text from the clipboard.',
+			});
+			await creating;
+			creating = null;
+		}
+	};
+})();
+
+const fire = async () => {
+	await setupOffscreenDocument();
+
+	const text = await chrome.runtime.sendMessage({
+		type: 'read-clipboard-text',
+	});
+
 	if (!text)  return;
 	const url = urlChecker.collectFirst(text) ||
 		// URLじゃなかったら検索
@@ -80,20 +112,7 @@ chrome.commands.onCommand.addListener(command => {
 	}
 });
 
-chrome.browserAction.onClicked.addListener(fire);
-
-const getClipboardText = (() => {
-	const pasteTarget = document.createElement('div');
-	pasteTarget.contentEditable = true;
-	document.activeElement.appendChild(pasteTarget);
-	return () => {
-		pasteTarget.textContent = '';
-		pasteTarget.focus();
-		document.execCommand('Paste', null, null);
-		const clipboardText = pasteTarget.textContent;
-		return clipboardText;
-	};
-})();
+chrome.action.onClicked.addListener(fire);
 
 const generateGoogleSearchUrl = word => {
 	const queryObject = {
